@@ -24,3 +24,27 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 31
+        build-tools: '31.0.0'
+
+
+    - name: Cache Gradle files
+      uses: actions/cache@v3
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/*.kts') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle
+
+    - name: Build with Gradle
+      run: ./gradlew assembleRelease
+
+    - name: Run Lint
+      run: ./gradlew lint
+
+    - name: Run Unit Tests
+      run: ./gradlew test
